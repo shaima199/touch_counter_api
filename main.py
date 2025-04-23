@@ -5,19 +5,17 @@ from ultralytics import YOLO
 import mediapipe as mp
 import shutil
 import os
-import requests
+import gdown
 
 app = FastAPI()
 
 MODEL_PATH = "yolov8n.pt"
-MODEL_URL = "https://drive.google.com/uc?export=download&id=1lJm6TFmcssok5xKAc-J44ymm0R7QhQy3"
+DRIVE_URL = "https://drive.google.com/uc?id=1lJm6TFmcssok5xKAc-J44ymm0R7QhQy3"
 
 # تحميل الموديل إذا ما كان موجود
 if not os.path.exists(MODEL_PATH):
     print("Downloading YOLOv8 model from Google Drive...")
-    r = requests.get(MODEL_URL)
-    with open(MODEL_PATH, "wb") as f:
-        f.write(r.content)
+    gdown.download(DRIVE_URL, MODEL_PATH, quiet=False)
     print("Download complete.")
 
 model = YOLO(MODEL_PATH)
@@ -61,3 +59,4 @@ async def predict_touches(video: UploadFile = File(...)):
     cap.release()
     os.remove(video_path)
     return {"touches": touch_count}
+
